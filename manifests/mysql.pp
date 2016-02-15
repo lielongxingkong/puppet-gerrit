@@ -8,8 +8,8 @@ class gerrit::mysql(
 ) {
 
   class { '::mysql::server':
-    config_hash => {
-      'root_password'  => $mysql_root_password,
+    root_password  => $mysql_root_password,
+    override_options => {
       'default_engine' => 'InnoDB',
       'bind_address'   => '127.0.0.1',
     }

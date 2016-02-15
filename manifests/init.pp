@@ -787,9 +787,6 @@ class gerrit(
     ],
   }
 
-  package { 'mysql-client':
-    ensure => present,
-  }
   # Add config to make clients assume UTF-8 encoding
   file { '/etc/mysql/conf.d/client.conf':
     ensure  => present,
