@@ -63,7 +63,8 @@ class GerritGitlab:
                 return k
 
     def test(self):
-        os.system('ssh -T -oStrictHostKeyChecking=no git@%s' % GITLAB_ADDRESS)
+        os.system('sleep 2')
+        os.system('ssh -i %s -T -oStrictHostKeyChecking=no git@%s' % ('/home/gerrit2/.ssh/id_rsa', GITLAB_ADDRESS))
         
 
 if __name__ == "__main__":
