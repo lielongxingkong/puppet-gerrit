@@ -1,11 +1,11 @@
 [gitlab]
-gitlab_address = gitlab.incloud-ci.com
-gitlab_protocol = http
-root_username = root
-root_passwd = 88888888
-gerrit_name = InCloud-CI Gerrit
-gerrit_username = gerrit
-gerrit_email = gerrit@incloud-ci.com
-gerrit_passwd = 88888888
-gerrit_ssh_key_title = review.incloud-ci.com
-gerrit_ssh_key = /root/.ssh/id_rsa.pub
+gitlab_address = <%= @gitlab_address %>
+gitlab_protocol = <%= @gitlab_protocol %>
+root_username = <%= @root_username %>
+root_passwd = <%= @root_passwd %>
+gerrit_name = <%= @gerrit_name %>
+gerrit_username = <%= @gerrit_username %>
+gerrit_email = <%= @gerrit_email %>
+gerrit_passwd = <%= @gerrit_passwd %>
+gerrit_ssh_key_title = <%= @gerrit_pub_key_title %>
+gerrit_ssh_key = <%= @gerrit_pub_key %>
