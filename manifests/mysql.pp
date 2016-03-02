@@ -22,6 +22,7 @@ class gerrit::mysql(
     host     => 'localhost',
     grant    => ['all'],
     charset  => 'utf8',
+    notify   => Exec['gerrit-initial-init'],
     require  => [
       Class['mysql::server'],
       Class['mysql::server::account_security'],
