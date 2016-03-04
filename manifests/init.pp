@@ -671,6 +671,14 @@ class gerrit(
     logoutput   => true,
   }
 
+  file { '/home/gerrit2/review_site/bin/init-gerrit-user':
+    ensure  => present,
+    owner   => 'gerrit2',
+    group   => 'gerrit2',
+    mode    => '0755',
+    source  => 'puppet:///modules/gerrit/init-gerrit-user',
+  }
+
   # Install Core Plugins
   exec { 'install-core-plugins':
     user        => 'gerrit2',

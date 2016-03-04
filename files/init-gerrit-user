@@ -1,0 +1,15 @@
+#!/bin/sh
+
+gerrit_site=/home/gerrit2/review_site
+gerrit_war=$gerrit_site/bin/gerrit.war
+gerrit_project_pubkey=$gerrit_site/etc/ssh_project_rsa_key.pub
+pubkey=$(cat $gerrit_project_pubkey)
+
+/usr/bin/java -jar ${gerrit_war} gsql -d ${gerrit_site} -c "replace into account_ssh_keys values ('$pubkey', 'Y', 1, 1)"
+
+echo $pubkey | ssh -p 29418 admin@review.incloud-ci.com gerrit create-account \
+  --group "'Non-Interactive Users'" \
+  --group Administrators \
+  --full-name "'Project Creator'" \
+  --email openstack-infra@lists.openstack.org \
+  --ssh-key - openstack-project-creator
