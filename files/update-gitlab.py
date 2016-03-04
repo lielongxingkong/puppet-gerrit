@@ -3,7 +3,7 @@ import os
 import gitlab
 import ConfigParser 
 
-CONFIG = '/home/gerrit2/review_site/etc/gitlab.conf'
+CONFIG = '/etc/gitlab/gitlab-projects.secure.config'
 
 cf = ConfigParser.ConfigParser() 
 cf.read(CONFIG)

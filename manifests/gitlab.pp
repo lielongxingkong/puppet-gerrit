@@ -37,28 +37,35 @@ class gerrit::gitlab (
       source  => 'puppet:///modules/gerrit/update-gitlab.py',
     }
 
-    file { '/home/gerrit2/review_site/etc/gitlab.conf':
+    file { '/etc/gitlab':
+      ensure => directory,
+      group  => 'root',
+      mode   => '0755',
+      owner  => 'root',
+    }
+
+    file { '/etc/gitlab/gitlab-projects.secure.config':
       ensure  => present,
       owner   => 'root',
       group   => 'root',
       mode    => '0444',
       content => template('gerrit/gitlab.conf.erb'),
       replace => true,
-      require => File['/home/gerrit2/review_site/etc'],
+      require => File['/etc/gitlab'],
     }
 
     exec { 'update_gitlab':
         command     => '/home/gerrit2/review_site/bin/update-gitlab.py',
         timeout     => 30, # 30 seconds
         subscribe   => [
-            File['/home/gerrit2/review_site/etc/gitlab.conf'],
+            File['/etc/gitlab/gitlab-projects.secure.config'],
             File['/home/gerrit2/review_site/bin/update-gitlab.py'],
             File['/home/gerrit2/.ssh/id_rsa'],
             File['/home/gerrit2/.ssh/id_rsa.pub'],
           ],
 #        refreshonly => true,
         require     => [
-            File['/home/gerrit2/review_site/etc/gitlab.conf'],
+            File['/etc/gitlab/gitlab-projects.secure.config'],
             File['/home/gerrit2/review_site/bin/update-gitlab.py'],
             File['/home/gerrit2/.ssh/id_rsa'],
             File['/home/gerrit2/.ssh/id_rsa.pub'],
