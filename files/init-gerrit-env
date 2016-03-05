@@ -1,0 +1,46 @@
+#!/bin/sh
+
+gerrit_site=/home/gerrit2/review_site
+gerrit_war=$gerrit_site/bin/gerrit.war
+host_pubkey_path=$gerrit_site/etc/ssh_host_rsa_key.pub
+host_pubkey=$(cat $host_pubkey_path)
+pm_pubkey_path=$gerrit_site/etc/ssh_project_rsa_key.pub
+pm_pubkey=$(cat $pm_pubkey_path)
+zuul_pubkey_path=/tmp/zuul_id_rsa.pub
+zuul_pubkey=$(cat $zuul_pubkey_path)
+gerrit_conf_dir=$gerrit_site/gerrit-config
+
+/usr/bin/java -jar ${gerrit_war} gsql -d ${gerrit_site} -c "replace into account_ssh_keys values ('$host_pubkey', 'Y', 1, 1)"
+
+ssh -p 29418 admin@review.incloud-ci.com gerrit set-account admin --delete-email admin@example.com --
+ssh -p 29418 admin@review.incloud-ci.com gerrit set-account admin --add-email review@incloud-ci.com --preferred-email review@incloud-ci.com --
+
+echo $pm_pubkey | ssh -p 29418 admin@review.incloud-ci.com gerrit create-account \
+  --group "'Non-Interactive Users'" \
+  --group Administrators \
+  --full-name "'InCloud-CI Project Manager'" \
+  --email pm@incloud-ci.com \
+  --ssh-key - project-manager
+
+echo $zuul_pubkey | ssh -p 29418 admin@review.incloud-ci.com gerrit create-account \
+  --group "'Non-Interactive Users'" \
+  --group Administrators \
+  --full-name "'InCloud-CI Zuul'" \
+  --email zuul@incloud-ci.com \
+  --ssh-key - zuul
+
+
+# init gerrit basic config
+[ -d "$gerrit_conf_dir" ] && mv -f $gerrit_conf_dir /tmp/`date +%s`
+git init $gerrit_conf_dir
+cd $gerrit_conf_dir
+git config user.name "InCloud-CI Project Manager"
+git config user.email pm@incloud-ci.com
+git remote add origin $gerrit_site/git/All-Projects
+git fetch origin refs/meta/config:refs/remotes/origin/meta/config
+git checkout meta/config
+cp $gerrit_site/etc/project.config .
+git add project.config
+git commit -a -m"Provide default gerrit config" || true
+git push origin meta/config:meta/config
+cd -

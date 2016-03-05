@@ -143,6 +143,7 @@ class gerrit(
   $ssh_project_rsa_pubkey_contents = '', # If left empty will not create file.
   $ssh_replication_rsa_key_contents = '', # If left emptry will not create files.
   $ssh_replication_rsa_pubkey_contents = '', # If left emptry will not create files.
+  $ssh_zuul_rsa_pubkey_contents = '', # If left emptry will not create files.
   $gerrit_auth_type = 'OPENID_SSO',
   $gerrit_contributor_agreement = true,
   $openidssourl = 'https://login.launchpad.net/+openid',
@@ -585,6 +586,16 @@ class gerrit(
     }
   }
 
+  if $ssh_zuul_rsa_pubkey_contents != '' {
+    file { '/tmp/zuul_id_rsa.pub':
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => $ssh_zuul_rsa_pubkey_contents,
+      replace => true,
+    }
+  }
+
   # Install Gerrit itself.
 
   # The Gerrit WAR is specified as a url like
@@ -671,12 +682,20 @@ class gerrit(
     logoutput   => true,
   }
 
-  file { '/home/gerrit2/review_site/bin/init-gerrit-user':
+  file { '/home/gerrit2/review_site/bin/init-gerrit-env':
     ensure  => present,
     owner   => 'gerrit2',
     group   => 'gerrit2',
     mode    => '0755',
-    source  => 'puppet:///modules/gerrit/init-gerrit-user',
+    source  => 'puppet:///modules/gerrit/init-gerrit-env',
+  }
+
+  file { '/home/gerrit2/review_site/etc/project.config':
+    ensure  => present,
+    owner   => 'gerrit2',
+    group   => 'gerrit2',
+    mode    => '0644',
+    source  => 'puppet:///modules/gerrit/project.config',
   }
 
   # Install Core Plugins
