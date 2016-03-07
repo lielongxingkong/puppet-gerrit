@@ -8,6 +8,8 @@ pm_pubkey_path=$gerrit_site/etc/ssh_project_rsa_key.pub
 pm_pubkey=$(cat $pm_pubkey_path)
 zuul_pubkey_path=/tmp/zuul_id_rsa.pub
 zuul_pubkey=$(cat $zuul_pubkey_path)
+jenkins_pubkey_path=/tmp/jenkins_id_rsa.pub
+jenkins_pubkey=$(cat $jenkins_pubkey_path)
 gerrit_conf_dir=$gerrit_site/gerrit-config
 
 /usr/bin/java -jar ${gerrit_war} gsql -d ${gerrit_site} -c "replace into account_ssh_keys values ('$host_pubkey', 'Y', 1, 1)"
@@ -29,6 +31,12 @@ echo $zuul_pubkey | ssh -p 29418 admin@review.incloud-ci.com gerrit create-accou
   --email zuul@incloud-ci.com \
   --ssh-key - zuul
 
+echo $jenkins_pubkey | ssh -p 29418 admin@review.incloud-ci.com gerrit create-account \
+  --group "'Non-Interactive Users'" \
+  --group Administrators \
+  --full-name "'InCloud-CI Jenkins'" \
+  --email jenkins@incloud-ci.com \
+  --ssh-key - jenkins
 
 # init gerrit basic config
 [ -d "$gerrit_conf_dir" ] && mv -f $gerrit_conf_dir /tmp/`date +%s`

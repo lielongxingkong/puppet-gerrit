@@ -144,6 +144,7 @@ class gerrit(
   $ssh_replication_rsa_key_contents = '', # If left emptry will not create files.
   $ssh_replication_rsa_pubkey_contents = '', # If left emptry will not create files.
   $ssh_zuul_rsa_pubkey_contents = '', # If left emptry will not create files.
+  $ssh_jenkins_rsa_pubkey_contents = '', # If left emptry will not create files.
   $gerrit_auth_type = 'OPENID_SSO',
   $gerrit_contributor_agreement = true,
   $openidssourl = 'https://login.launchpad.net/+openid',
@@ -593,6 +594,16 @@ class gerrit(
       group   => 'root',
       mode    => '0644',
       content => $ssh_zuul_rsa_pubkey_contents,
+      replace => true,
+    }
+  }
+
+  if $ssh_jenkins_rsa_pubkey_contents != '' {
+    file { '/tmp/jenkins_id_rsa.pub':
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => $ssh_jenkins_rsa_pubkey_contents,
       replace => true,
     }
   }
