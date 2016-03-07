@@ -158,6 +158,7 @@ class gerrit(
   $ldap_ssh_account_name = '',
   $ldap_accountfullname = '',
   $email = '',
+  $gerrit_sendemail= false,
   $smtpserver = 'localhost',
   $sendemail_from = 'MIXED',
   $sendemail_include_diff = false,
