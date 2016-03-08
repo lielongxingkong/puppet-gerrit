@@ -10,8 +10,14 @@ class gerrit::mysql(
   class { '::mysql::server':
     root_password  => $mysql_root_password,
     override_options => {
-      'default_engine' => 'InnoDB',
-      'bind_address'   => '127.0.0.1',
+      'mysqld' => {
+        'default-storage-engine' => 'InnoDB',
+        'character-set-server' => 'utf8',
+        'collation-server' => 'utf8_general_ci',
+      },
+      'client' => {
+        'default-character-set' => 'utf8',
+      },
     }
   }
   include ::mysql::server::account_security
