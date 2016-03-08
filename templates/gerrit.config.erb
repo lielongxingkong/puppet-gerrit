@@ -25,6 +25,7 @@
 	enableRunAs = true
 <% if @gerrit_auth_type == 'OPENID_SSO' -%>
 	openIdSsoUrl = <%= @openidssourl %>
+        <% if @logouturl != '' -%>logoutUrl = <%= @logouturl %><% end -%>
 <% end -%>
 <% if @gerrit_auth_type == 'LDAP' -%>
 [ldap]
